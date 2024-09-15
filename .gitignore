@@ -1,0 +1,5 @@
+# precompiled files.
+.zig-cache/ 
+zig-out/
+
+
