@@ -2,7 +2,7 @@ pub const timers = @import("timers.zig");
 
 pub const keypad: *volatile Keypad = @ptrFromInt(0x400_0130);
 
-/// Works like rgb but very color can only be a value from 0 to 31.
+/// Works like rgb but every color can only be a value from 0 to 31.
 pub const Color = packed struct(u16) {
     transparent: bool = false,
     red: u5,
