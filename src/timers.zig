@@ -21,7 +21,7 @@ pub const timer3: Timer = .{
 
 /// gba timer, always counts down to zero then overflows back to its initial value
 pub const Timer = struct {
-    /// Read the value of this ptr to get the timers current value, but the value you set to this ptr with be the timers *next* initial value, after an overflow.
+    /// Reading the value of this ptr to gets the timers current count, but setting the value of this ptr will set the timers *next* initial count after an overflow.
     timerPtr: *volatile u16,
     config: *volatile TimerConfig,
 
