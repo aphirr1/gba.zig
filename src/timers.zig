@@ -33,6 +33,10 @@ pub const Timer = struct {
     pub fn setTimerInitialValue(self: *Timer, initialValue: u16) void {
         self.timerPtr.* = initialValue;
     }
+
+    pub fn setConfig(self: *Timer, conf: TimerConfig) void {
+        self.config.* = conf;
+    }
 };
 
 pub const TimerConfig = packed struct(u8) {
