@@ -1,40 +1,45 @@
 ///! Namespace for everything that has to do with gba timers.
+const gba = @import("self");
+const reg = gba.reg;
+
 pub const timer0: Timer = .{
-    .timerPtr = @ptrFromInt(0x0400_0100),
-    .config = @ptrFromInt(0x0400_0102),
+    .timerPtr = @ptrCast(reg.timer0),
+    .config = @ptrCast(reg.timer0_control),
 };
 
 pub const timer1: Timer = .{
-    .timerPtr = @ptrFromInt(0x0800_0100),
-    .config = @ptrFromInt(0x0800_0102),
+    .timerPtr = @ptrCast(reg.timer1),
+    .config = @ptrCast(reg.timer1_control),
 };
 
 pub const timer2: Timer = .{
-    .timerPtr = @ptrFromInt(0x0c00_0100),
-    .config = @ptrFromInt(0x0c00_0102),
+    .timerPtr = @ptrCast(reg.timer2),
+    .config = @ptrCast(reg.timer2_control),
 };
 
 pub const timer3: Timer = .{
-    .timerPtr = @ptrFromInt(0x0010_0100),
-    .config = @ptrFromInt(0x0010_0102),
+    .timerPtr = @ptrCast(reg.timer3),
+    .config = @ptrCast(reg.timer3_control),
 };
 
 /// gba timer, always counts down to zero then overflows back to its initial value
 pub const Timer = struct {
-    /// Read the value of this ptr to get the timers current value, but the value you set to this ptr with be the timers *next* initial value, after an overflow.
     timerPtr: *volatile u16,
     config: *volatile TimerConfig,
 
-    pub fn getTimerValue(self: Timer) u16 {
+    pub inline fn getTimerValue(self: Timer) u16 {
         return self.timerPtr.*;
     }
 
-    ///The value passed to thus function will be the timers next initial value, after an overflow.
-    pub fn setTimerInitialValue(self: *Timer, initialValue: u16) void {
+    ///The value passed to this function will be the timers next initial value, after an overflow.
+    pub inline fn setTimerInitialValue(self: *Timer, initialValue: u16) void {
         self.timerPtr.* = initialValue;
     }
 
-    pub fn setConfig(self: *Timer, conf: TimerConfig) void {
+    // TODO: Think of a good naming convention for setting state using mmio
+    // I dont really like `(x).setConfig(.{...});`
+    // its to vague
+    pub inline fn setConfig(self: *Timer, conf: TimerConfig) void {
         self.config.* = conf;
     }
 };

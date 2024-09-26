@@ -1,10 +1,12 @@
-pub const timers = @import("timers.zig");
+pub const timer = @import("timer.zig");
+pub const reg = @import("registers.zig");
+const std = @import("std");
+const root = @import("root");
 
 pub const keypad: *volatile Keypad = @ptrFromInt(0x400_0130);
 
 /// Every color can be from 0-31.
-pub const Color = packed struct(u16) {
-    transparent: bool = false,
+pub const Color = packed struct(u15) {
     red: u5,
     green: u5,
     blue: u5,
