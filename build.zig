@@ -56,7 +56,7 @@ pub fn addRomFile(b: *Build, exe: *Step.Compile) *Step.ObjCopy {
     return objcopy;
 }
 
-pub fn addSimpleRunCommand(b: *Build, objcopy: *Step.Compile, emu_command: []const u8) void {
+pub fn addSimpleRunCommand(b: *Build, objcopy: *Step.ObjCopy, emu_command: []const u8) void {
     const emu_cmd = b.addSystemCommand(&.{emu_command});
     if (b.args) |args| {
         emu_cmd.addArgs(args);
