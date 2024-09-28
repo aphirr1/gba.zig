@@ -2,13 +2,13 @@ const std = @import("std");
 const Build = std.Build;
 const Step = Build.Step;
 
-const linker_script = cwd() ++ "/gba.ld";
+pub const linker_script = cwd() ++ "/gba.ld";
 const linker_path: std.Build.LazyPath = .{ .cwd_relative = linker_script };
 
 const root_file = "src/gba.zig";
 
 fn cwd() []const u8 {
-    return std.fs.path.dirname(@src().file) orelse ".";
+    return std.fs.path.dirname(@src().file) orelse "./";
 }
 
 pub fn getGBATarget(b: *std.Build) std.Build.ResolvedTarget {
@@ -49,9 +49,22 @@ pub fn addRomFile(b: *Build, exe: *Step.Compile) *Step.ObjCopy {
     objcopy.step.dependOn(&exe.step);
 
     const make_gba_file = b.addInstallBinFile(objcopy.getOutput(), exe.name ++ ".gba");
+
     make_gba_file.step.dependOn(&objcopy.step);
+    b.default_step.dependOn(&make_gba_file.step);
 
     return objcopy;
+}
+
+pub fn addSimpleRunCommand(b: *Build, objcopy: *Step.Compile, emu_command: []const u8) void {
+    const emu_cmd = b.addSystemCommand(&.{emu_command});
+    if (b.args) |args| {
+        emu_cmd.addArgs(args);
+    }
+    emu_cmd.addFileArg(objcopy.getOutput());
+
+    const run_step = b.step("run", "Run the app");
+    run_step.dependOn(&emu_cmd.step);
 }
 
 pub fn build(b: *std.Build) void {
