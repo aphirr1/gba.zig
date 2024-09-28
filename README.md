@@ -26,7 +26,7 @@ const rom = gbz.addGBARom(
 const gba_dep = b.dependency("gba-zig", .{});
 rom.root_module.addImport("gba", gba_dep.module("gba-zig"));
 
-const obj = gbz.addRomFile(b, rom);
+const obj = gbz.installRomFile(b, rom);
 
 gbz.addSimpleRunCommand(b, obj, emulator_command);
 ```
