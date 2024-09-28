@@ -30,6 +30,10 @@ const KeyState = enum(u1) {
     down = 0,
 };
 
+comptime {
+    _ = _start;
+}
+
 export fn gMain() void {
     if (@hasDecl(root, "main")) {
         root.main();
