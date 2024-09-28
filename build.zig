@@ -45,7 +45,7 @@ pub fn addGBARom(
     return exe;
 }
 
-pub fn addRomFile(b: *Build, exe: *Step.Compile) *Step.ObjCopy {
+pub fn installRomFile(b: *Build, exe: *Step.Compile) *Step.ObjCopy {
     const objcopy = exe.addObjCopy(.{ .format = .bin });
     objcopy.step.dependOn(&exe.step);
 
