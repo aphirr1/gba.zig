@@ -12,6 +12,8 @@ zig fetch --save git+https://github.com/aphirr1/gba.zig
 ```
 Example build.zig
 ```
+const gbz = @import("gba-zig");
+
 const optimize = b.standardOptimizeOption(.{});
 
 const rom = gbz.addGBARom(
