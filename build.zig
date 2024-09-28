@@ -2,8 +2,8 @@ const std = @import("std");
 const Build = std.Build;
 const Step = Build.Step;
 
-pub const linker_script = cwd() ++ "/gba.ld";
-const linker_path: std.Build.LazyPath = .{ .cwd_relative = linker_script };
+const linker_script = cwd() ++ "/gba.ld";
+pub const linker_path: std.Build.LazyPath = .{ .cwd_relative = linker_script };
 
 const root_file = "src/gba.zig";
 
@@ -38,9 +38,10 @@ pub fn addGBARom(
         .optimize = optimiztion,
     });
 
+    exe.setLinkerScript(linker_path);
+
     b.default_step.dependOn(&exe.step);
 
-    exe.setLinkerScript(linker_path);
     return exe;
 }
 
@@ -48,10 +49,21 @@ pub fn addRomFile(b: *Build, exe: *Step.Compile) *Step.ObjCopy {
     const objcopy = exe.addObjCopy(.{ .format = .bin });
     objcopy.step.dependOn(&exe.step);
 
-    const make_gba_file = b.addInstallBinFile(objcopy.getOutput(), exe.name ++ ".gba");
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+
+    var game_name_list = std.ArrayList(u8).init(allocator);
+
+    _ = game_name_list.appendUnalignedSlice(exe.name) catch @panic("OOM");
+    _ = game_name_list.appendUnalignedSlice(".gba") catch @panic("OOM");
+
+    const make_gba_file = b.addInstallBinFile(objcopy.getOutput(), game_name_list.items);
+    b.default_step.dependOn(&make_gba_file.step);
+
+    game_name_list.deinit();
+    _ = gpa.deinit();
 
     make_gba_file.step.dependOn(&objcopy.step);
-    b.default_step.dependOn(&make_gba_file.step);
 
     return objcopy;
 }
